@@ -15,27 +15,28 @@ venv311/
 # macOS
 .DS_Store
 
-# Logs & data
+# Data / logs
+*.txt
 *.log
 *.json
 *.jsonl
 *.csv
 *.npy
+
+# Media
 *.png
+*.jpg
 *.mp4
-*.xlsx
+
+# Documents
 *.pdf
 *.doc
 *.docx
+*.xlsx
 
-# Large raw data
-raw*
-swift-gnss*
-lidar_*
-map_*
-imu*
-gnss*
-
-# Submodules / external libs
+# External libs
 libsbp/
 sbp_backup/
+
+# Temp
+test2/
