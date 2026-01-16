@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+venv311/
+
+# IDEs
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs & data
+*.log
+*.json
+*.jsonl
+*.csv
+*.npy
+*.png
+*.mp4
+*.xlsx
+*.pdf
+*.doc
+*.docx
+
+# Large raw data
+raw*
+swift-gnss*
+lidar_*
+map_*
+imu*
+gnss*
+
+# Submodules / external libs
+libsbp/
+sbp_backup/
