@@ -218,32 +218,3 @@ finally:
     except:
         pass
 
-# ----------------- Plotting (post-run) -----------------
-print("Plotting buffered data (last samples).")
-
-# convert deques to numpy arrays for plotting if non-empty
-if len(lat_q) > 0:
-    LON = np.array(lon_q, dtype=float); LAT = np.array(lat_q, dtype=float)
-    plt.figure(figsize=(7,6)); plt.plot(LON, LAT, ".-", ms=3); plt.xlabel("Lon"); plt.ylabel("Lat")
-    plt.title("GNSS Track (last samples)"); plt.grid(True)
-
-if len(hgt_q) > 0:
-    plt.figure(figsize=(8,3)); plt.plot(np.array(time_q), np.array(hgt_q)); plt.xlabel("s"); plt.ylabel("Height (m)")
-    plt.title("Height vs time"); plt.grid(True)
-
-if len(vn_q) > 0:
-    plt.figure(figsize=(8,4)); plt.plot(np.array(time_q), np.array(vn_q), label="Vn")
-    plt.plot(np.array(time_q), np.array(ve_q), label="Ve"); plt.plot(np.array(time_q), np.array(vd_q), label="Vd")
-    plt.xlabel("s"); plt.ylabel("m/s"); plt.legend(); plt.title("Velocity N/E/D"); plt.grid(True)
-
-if len(ax_q) > 0:
-    plt.figure(figsize=(8,4)); plt.plot(np.array(imu_time_q), np.array(ax_q), label="ax")
-    plt.plot(np.array(imu_time_q), np.array(ay_q), label="ay"); plt.plot(np.array(imu_time_q), np.array(az_q), label="az")
-    plt.xlabel("s"); plt.ylabel("m/s^2"); plt.legend(); plt.title("IMU accel (converted)"); plt.grid(True)
-
-if len(gx_q) > 0:
-    plt.figure(figsize=(8,4)); plt.plot(np.array(imu_time_q), np.array(gx_q), label="gx")
-    plt.plot(np.array(imu_time_q), np.array(gy_q), label="gy"); plt.plot(np.array(imu_time_q), np.array(gz_q), label="gz")
-    plt.xlabel("s"); plt.ylabel("deg/s"); plt.legend(); plt.title("IMU gyro (converted)"); plt.grid(True)
-
-plt.show()
