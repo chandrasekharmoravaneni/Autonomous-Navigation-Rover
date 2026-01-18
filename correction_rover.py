@@ -4,7 +4,7 @@ from sbp.navigation import MsgPosLLH, MsgPosLLHDepA
 import csv
 import time
 
-IP = "195.37.48.233"
+IP = "195.37.48.235"
 PORT = 55555
 
 driver = TCPDriver(IP, PORT)

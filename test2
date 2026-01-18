@@ -1,0 +1,62 @@
+import socket, sys
+
+STX = b'\x02'
+ETX = b'\x03'
+
+def send_cola_a(sock, cmd_str):
+    # Frames ASCII command with STX/ETX as required by CoLa-A.
+    telegram = STX + cmd_str.encode('ascii') + ETX
+    sock.sendall(telegram)
+
+def recv_until_etx(sock):
+    # Read bytes until ETX; handle cases where multiple telegrams arrive back-to-back.
+    buf = bytearray()
+    while True:
+        chunk = sock.recv(4096)
+        if not chunk:
+            raise ConnectionError("Socket closed")
+        buf.extend(chunk)
+        # Split by ETX; yield complete frames
+        frames = buf.split(ETX)
+        for i in range(len(frames) - 1):
+            yield frames[i]
+        buf = bytearray(frames[-1])
+
+def main(host='192.168.0.1', port=2112):
+    print(f"Connecting to TiM781 at {host}:{port} …")
+    with socket.create_connection((host, port), timeout=5.0) as s:
+        # OPTIONAL: read angular settings once
+        send_cola_a(s, "sRN LMPoutputRange")
+        for frame in recv_until_etx(s):
+            if frame.startswith(STX):
+                frame = frame[1:]  # strip leading STX if present in stream
+            text = frame.decode('ascii', errors='replace')
+            if "sRA LMPoutputRange" in text:
+                print("Output range:", text)
+                break
+
+        # Start continuous scan output
+        print("Starting continuous output …")
+        send_cola_a(s, "sEN LMDscandata 1")  # start streaming (stop with … 0)
+        # Expect a confirmation 'sEA LMDscandata 1' followed by repeated 'sSN LMDscandata …'
+        for frame in recv_until_etx(s):
+            if frame.startswith(STX):
+                frame = frame[1:]
+            text = frame.decode('ascii', errors='replace')
+            # Print each complete telegram line (you can write to a log file instead)
+            print(text)
+            # Tip: Press Ctrl-C to stop.
+
+    print("Disconnected.")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        # On Ctrl-C: reconnect quickly to send the stop command so the device isn't left streaming
+        try:
+            with socket.create_connection(("192.168.0.1", 2112), timeout=2.0) as s:
+                send_cola_a(s, "sEN LMDscandata 0")
+        except Exception:
+            pass
+        sys.exit("\nStopped by user.")
